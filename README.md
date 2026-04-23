@@ -51,4 +51,5 @@ Git に含めないもの:
 ## 補足
 
 - 旧 installer と同様に、初回ログから admin password を採取して `ttrss_admin_password.txt` に保存できます
+- すでに初期化済みで起動ログに初期パスワードが残っていない場合は、admin password を再設定して同じファイルへ保存します
 - reverse proxy 連携は別 override file で追加する想定です

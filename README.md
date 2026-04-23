@@ -38,8 +38,17 @@ Git に含めないもの:
 ./scripts/init-data-dirs.sh
 ```
 
+初回起動後に管理者初期パスワードを保存する場合:
+
+```bash
+./scripts/capture-admin-password.sh
+```
+
+保存先:
+
+- `./ttrss_admin_password.txt`
+
 ## 補足
 
-- 旧 installer では初回ログから admin password を抜いていましたが、この repo ではその運用を固定化しません
+- 旧 installer と同様に、初回ログから admin password を採取して `ttrss_admin_password.txt` に保存できます
 - reverse proxy 連携は別 override file で追加する想定です
-

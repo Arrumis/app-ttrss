@@ -9,6 +9,8 @@ services:
   db:
     image: postgres:12-alpine
     restart: unless-stopped
+    networks:
+      - default
     environment:
       POSTGRES_USER: "${TTRSS_DB_USER:-postgres}"
       POSTGRES_PASSWORD: "${TTRSS_DB_PASS:-change-me}"
@@ -20,6 +22,8 @@ services:
   app:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
     restart: unless-stopped
+    networks:
+      - default
     environment:
       <<: *ttrss-env
     depends_on:
@@ -31,6 +35,8 @@ services:
   updater:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
     restart: unless-stopped
+    networks:
+      - default
     environment:
       <<: *ttrss-env
     depends_on:
@@ -43,6 +49,11 @@ services:
   web-nginx:
     image: cthulhoo/ttrss-web-nginx:latest
     restart: unless-stopped
+    networks:
+      default:
+      proxy:
+        aliases:
+          - "${TTRSS_PROXY_ALIAS:-ttrss}"
     environment:
       <<: *ttrss-env
     depends_on:
@@ -51,3 +62,9 @@ services:
       - "${APP_PORT:-8280}:80"
     volumes:
       - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html:ro"
+
+networks:
+  default:
+  proxy:
+    external: true
+    name: "${PROXY_NETWORK_NAME:-proxy-network}"

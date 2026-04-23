@@ -1,0 +1,53 @@
+x-ttrss-env: &ttrss-env
+  TTRSS_DB_USER: "${TTRSS_DB_USER:-postgres}"
+  TTRSS_DB_NAME: "${TTRSS_DB_NAME:-postgres}"
+  TTRSS_DB_PASS: "${TTRSS_DB_PASS:-change-me}"
+  TTRSS_SELF_URL_PATH: "${TTRSS_SELF_URL_PATH:-http://localhost:8280/tt-rss/}"
+  TZ: "${TZ:-Asia/Tokyo}"
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${TTRSS_DB_USER:-postgres}"
+      POSTGRES_PASSWORD: "${TTRSS_DB_PASS:-change-me}"
+      POSTGRES_DB: "${TTRSS_DB_NAME:-postgres}"
+      TZ: "${TZ:-Asia/Tokyo}"
+    volumes:
+      - "${HOST_DATA_DIR:-./data}/db:/var/lib/postgresql/data"
+
+  app:
+    image: cthulhoo/ttrss-fpm-pgsql-static:latest
+    restart: unless-stopped
+    environment:
+      <<: *ttrss-env
+    depends_on:
+      - db
+    volumes:
+      - "${HOST_DATA_DIR:-./data}/app:/var/www/html"
+      - "${HOST_DATA_DIR:-./data}/config.d:/opt/tt-rss/config.d:ro"
+
+  updater:
+    image: cthulhoo/ttrss-fpm-pgsql-static:latest
+    restart: unless-stopped
+    environment:
+      <<: *ttrss-env
+    depends_on:
+      - app
+    command: /opt/tt-rss/updater.sh
+    volumes:
+      - "${HOST_DATA_DIR:-./data}/app:/var/www/html"
+      - "${HOST_DATA_DIR:-./data}/config.d:/opt/tt-rss/config.d:ro"
+
+  web-nginx:
+    image: cthulhoo/ttrss-web-nginx:latest
+    restart: unless-stopped
+    environment:
+      <<: *ttrss-env
+    depends_on:
+      - app
+    ports:
+      - "${APP_PORT:-8280}:80"
+    volumes:
+      - "${HOST_DATA_DIR:-./data}/app:/var/www/html:ro"

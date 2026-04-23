@@ -15,7 +15,7 @@ services:
       POSTGRES_DB: "${TTRSS_DB_NAME:-postgres}"
       TZ: "${TZ:-Asia/Tokyo}"
     volumes:
-      - "${HOST_DATA_DIR:-./data}/db:/var/lib/postgresql/data"
+      - "${TTRSS_DB_DIR:-${HOST_DATA_DIR:-./data}/db}:/var/lib/postgresql/data"
 
   app:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
@@ -25,8 +25,8 @@ services:
     depends_on:
       - db
     volumes:
-      - "${HOST_DATA_DIR:-./data}/app:/var/www/html"
-      - "${HOST_DATA_DIR:-./data}/config.d:/opt/tt-rss/config.d:ro"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html"
+      - "${TTRSS_CONFIG_DIR:-${HOST_DATA_DIR:-./data}/config.d}:/opt/tt-rss/config.d:ro"
 
   updater:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
@@ -37,8 +37,8 @@ services:
       - app
     command: /opt/tt-rss/updater.sh
     volumes:
-      - "${HOST_DATA_DIR:-./data}/app:/var/www/html"
-      - "${HOST_DATA_DIR:-./data}/config.d:/opt/tt-rss/config.d:ro"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html"
+      - "${TTRSS_CONFIG_DIR:-${HOST_DATA_DIR:-./data}/config.d}:/opt/tt-rss/config.d:ro"
 
   web-nginx:
     image: cthulhoo/ttrss-web-nginx:latest
@@ -50,4 +50,4 @@ services:
     ports:
       - "${APP_PORT:-8280}:80"
     volumes:
-      - "${HOST_DATA_DIR:-./data}/app:/var/www/html:ro"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html:ro"

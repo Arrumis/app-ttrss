@@ -6,6 +6,15 @@ Tiny Tiny RSS を独立リポジトリとして扱うための新しい正本候
 
 GitHub のコミット一覧が英語で分かりにくい場合は、[コミット履歴の日本語メモ](docs/COMMIT_HISTORY_JA.md) を見てください。
 
+## サンプル値の置き換え
+
+`.env.example` は公開用の見本です。実際に使う値は `.env.local` に書きます。
+
+- `HOST_DATA_DIR` は ttrss の DB / アプリ / 追加設定を保存する場所へ変更します
+- `TTRSS_DB_PASS` は自分で決めた強い値へ変更します
+- `TTRSS_SELF_URL_PATH` は公開URLに合わせます。例: `https://ttrss.ponkotu.mydns.jp/tt-rss/`
+- 親 repo からまとめて使う場合は、`stack.service.env.local` の `GLOBAL__DOMAIN` や `APP_TTRSS__...` を使います
+
 ## 起動
 
 ```bash

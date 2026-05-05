@@ -18,7 +18,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: "${TZ:-Asia/Tokyo}"
     volumes:
-      - "${TTRSS_DB_DIR:-${HOST_DATA_DIR:-./data}/db}:/var/lib/postgresql/data"
+      - "${TTRSS_DB_DIR:-${HOST_DATA_DIR:-./data}/ttrss_db}:/var/lib/postgresql/data"
 
   app:
     image: supahgreg/tt-rss:latest
@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
     volumes:
-      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/ttrss_app}:/var/www/html"
       - "${TTRSS_CONFIG_DIR:-${HOST_DATA_DIR:-./data}/config.d}:/opt/tt-rss/config.d:ro"
 
   updater:
@@ -44,7 +44,7 @@ services:
       - app
     command: /opt/tt-rss/updater.sh
     volumes:
-      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/ttrss_app}:/var/www/html"
       - "${TTRSS_CONFIG_DIR:-${HOST_DATA_DIR:-./data}/config.d}:/opt/tt-rss/config.d:ro"
 
   web-nginx:
@@ -62,7 +62,7 @@ services:
     ports:
       - "${APP_PORT:-8280}:80"
     volumes:
-      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/app}:/var/www/html:ro"
+      - "${TTRSS_APP_DIR:-${HOST_DATA_DIR:-./data}/ttrss_app}:/var/www/html:ro"
 
 networks:
   default:

@@ -15,6 +15,9 @@ GitHub のコミット一覧が英語で分かりにくい場合は、[コミッ
 - `TTRSS_SELF_URL_PATH` は公開URLに合わせます。例: `https://ttrss.ponkotu.mydns.jp/tt-rss/`
 - 親 repo からまとめて使う場合は、`stack.service.env.local` の `GLOBAL__DOMAIN` や `APP_TTRSS__...` を使います
 
+データ配置は旧コンテナと同じ `ttrss_app` / `ttrss_db` / `config.d` を標準にしています。
+HDD移行で `ttrss` ディレクトリをそのまま使う場合は、`HOST_DATA_DIR=/path/to/ttrss` とします。
+
 ## 起動
 
 ```bash
@@ -41,8 +44,8 @@ Git に含めるもの:
 Git に含めないもの:
 
 - `.env.local`
-- `data/app/`
-- `data/db/`
+- `data/ttrss_app/`
+- `data/ttrss_db/`
 - `data/config.d/`
 
 ## 初期化

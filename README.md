@@ -1,71 +1,55 @@
 # app-ttrss
 
-Tiny Tiny RSS を独立リポジトリとして扱うための新しい正本候補です。旧 installer のテンプレート展開をやめて、repo 単独で起動できる構成に寄せています。
+Tiny Tiny RSS を Docker で動かすためのリポジトリです。
+データベース、アプリの永続領域、追加設定を指定した保存先へ置けます。
 
-## 日本語メモ
-
-GitHub のコミット一覧が英語で分かりにくい場合は、[コミット履歴の日本語メモ](docs/COMMIT_HISTORY_JA.md) を見てください。
-
-## サンプル値の置き換え
-
-`.env.example` は公開用の見本です。実際に使う値は `.env.local` に書きます。
-
-- `HOST_DATA_DIR` は ttrss の DB / アプリ / 追加設定を保存する場所へ変更します
-- `TTRSS_DB_PASS` は自分で決めた強い値へ変更します
-- `TTRSS_SELF_URL_PATH` は公開URLに合わせます。例: `https://ttrss.ponkotu.mydns.jp/tt-rss/`
-- 親 repo からまとめて使う場合は、`stack.service.env.local` の `GLOBAL__DOMAIN` や `APP_TTRSS__...` を使います
-
-データ配置は旧コンテナと同じ `ttrss_app` / `ttrss_db` / `config.d` を標準にしています。
-HDD移行で `ttrss` ディレクトリをそのまま使う場合は、`HOST_DATA_DIR=/path/to/ttrss` とします。
-
-## 起動
+## 使い方
 
 ```bash
 cp .env.example .env.local
 ./scripts/init-data-dirs.sh
-docker compose up -d
+docker compose --env-file .env.local up -d
 ```
 
-ブラウザ:
+ブラウザで開く画面:
 
 - `http://localhost:8280/tt-rss/`
 
-`APP_PORT` を変える場合は `.env.local` の `TTRSS_SELF_URL_PATH` も合わせて更新してください。
+初回の管理者パスワードを保存する場合:
 
-## 管理対象
+```bash
+./scripts/capture-admin-password.sh
+```
 
-Git に含めるもの:
+## 変更する値
+
+`.env.example` は公開用の見本です。実際の値は `.env.local` に書きます。
+
+- `HOST_DATA_DIR`: ttrss の実データを置く場所です。
+- `TTRSS_DB_PASS`: データベースのパスワードです。必ず変更します。
+- `TTRSS_SELF_URL_PATH`: ブラウザから見える正式な URL です。
+- `APP_TTRSS__...`: 親リポジトリからまとめて設定するときに使います。
+
+## データ
+
+GitHub に上げるもの:
 
 - `compose.yaml`
 - `.env.example`
 - `scripts/`
 - `README.md`
 
-Git に含めないもの:
+GitHub に上げないもの:
 
 - `.env.local`
-- `data/ttrss_app/`
-- `data/ttrss_db/`
+- `data/app/`
+- `data/db/`
 - `data/config.d/`
+- `ttrss_admin_password.txt`
 
-## 初期化
-
-```bash
-./scripts/init-data-dirs.sh
-```
-
-初回起動後に管理者初期パスワードを保存する場合:
-
-```bash
-./scripts/capture-admin-password.sh
-```
-
-保存先:
-
-- `./ttrss_admin_password.txt`
+既存環境から移す場合は、旧 `ttrss` ディレクトリを `HOST_DATA_DIR` に指定します。
 
 ## 補足
 
-- 旧 installer と同様に、初回ログから admin password を採取して `ttrss_admin_password.txt` に保存できます
-- すでに初期化済みで起動ログに初期パスワードが残っていない場合は、admin password を再設定して同じファイルへ保存します
-- reverse proxy 連携は別 override file で追加する想定です
+- すでに初期化済みで起動ログに初期パスワードが残っていない場合は、管理者パスワードを再設定してください。
+- リバースプロキシ連携は親リポジトリ側の設定で扱います。

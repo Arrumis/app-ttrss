@@ -1,13 +1,16 @@
 data/*
 !data/.gitkeep
 !data/app/
+data/app/*
 !data/app/.gitkeep
 !data/config.d/
+data/config.d/*
 !data/config.d/.gitkeep
 !data/db/
+data/db/*
 !data/db/.gitkeep
 .env
 .env.local
+.env.local.*
 .DS_Store
 ttrss_admin_password.txt
-
